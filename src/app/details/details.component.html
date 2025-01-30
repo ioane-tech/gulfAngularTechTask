@@ -1,0 +1,8 @@
+<div class="container">
+    <h1>{{ repository?.name }}</h1>
+    <p><strong>Description:</strong> {{ repository?.description }}</p>
+    <p><strong>Stars:</strong> {{ repository?.stargazers_count }}</p>
+    <p><strong>Forks:</strong> {{ repository?.forks_count }}</p>
+    <a [href]="repository?.html_url" target="_blank">View on GitHub</a>
+</div>
+  
