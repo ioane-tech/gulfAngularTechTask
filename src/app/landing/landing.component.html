@@ -18,6 +18,7 @@
     
   
     <div *ngIf="isTableView; else cardView">
+      <!--table view-->
       <table>
         <thead>
           <tr>
@@ -35,7 +36,8 @@
         </tbody>
       </table>
     </div>
-  
+    
+    <!--card view-->
     <ng-template #cardView>
       <div class="card" *ngFor="let repo of repositories" (click)="goToDetail(repo)">
         <h3>{{ repo.name }}</h3>
@@ -43,5 +45,8 @@
         <p>Forks: {{ repo.forks_count }}</p>
       </div>
     </ng-template>
+
+    <!--no data found message-->
+    <h1 class="data_not_found" *ngIf="dataNotFound">Data not found!</h1>
 </div>
   

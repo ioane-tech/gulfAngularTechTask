@@ -17,6 +17,7 @@ export class LandingComponent {
   repositories: any[] = [];
   isTableView = true;
   isDebouncing = false;
+  dataNotFound = false;
 
   private searchSubject = new Subject<string>();
 
@@ -25,7 +26,7 @@ export class LandingComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    // Handle query parameters for initial search
+    // query parameters for search
     this.route.queryParams.subscribe((params) => {
       if (params['query']) {
         this.searchQuery = params['query'];
@@ -33,13 +34,31 @@ export class LandingComponent {
       }
     });
   
-    // Set up debouncing for the search input
-    this.searchSubject.pipe(debounceTime(500)).subscribe((query) => {
-      this.githubService.searchRepositories(query).subscribe((data) => {
-        this.repositories = data.items;
-        this.isDebouncing = false;
+    //debouncing for the search input
+    try{
+      this.searchSubject.pipe(debounceTime(500)).subscribe((query) => {
+        //check if query is empy
+        if (!query || query.trim() == '') {
+          this.repositories = [];
+          this.isDebouncing = false;
+          return;
+        }
+        
+        this.githubService.searchRepositories(query).subscribe((data) => {
+          if(data.items.length == 0 ){
+            this.dataNotFound = true
+          }else{
+            this.dataNotFound = false
+          }
+          this.repositories = data.items
+          this.isDebouncing = false;
+        });
       });
-    });
+    }catch(err){
+      console.log(err)
+      this.repositories = []
+    }
+
   }
 
   onSearchChange() {

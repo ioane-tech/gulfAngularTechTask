@@ -2,7 +2,7 @@
 .container {
     width: 80%;
     max-width: 1200px;
-    height: 700px;
+    height: 600px;
     overflow-y: auto;
     margin: 0 auto;
     padding: 20px;
@@ -28,7 +28,7 @@ h1 {
 
 /* Input and Button styling */
 input[type="text"] {
-    width: 100%;
+    width: 99%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
@@ -101,6 +101,7 @@ table tr:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
 .card:hover {
@@ -122,6 +123,13 @@ table tr:hover {
 /* Checkbox styling */
 input[type="checkbox"] {
     margin-left: 10px;
+}
+
+.data_not_found{
+    font-size: 25px;
+    color: rgb(178, 178, 178);
+    
+    margin-top: 20px;
 }
 
 /* Media Queries for responsiveness */
