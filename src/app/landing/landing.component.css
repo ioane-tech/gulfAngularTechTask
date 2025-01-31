@@ -43,10 +43,10 @@ input[type="text"]:focus {
 }
 
 button {
-    padding: 10px 15px;
+    padding: 8px 13px;
     background-color: #007bff;
+    border: 2px solid #007bff;
     color: white;
-    border: none;
     border-radius: 5px;
     cursor: pointer;
     transition:  0.3s ;
@@ -54,7 +54,8 @@ button {
 
 
 button:hover {
-    background-color: #0056b3;
+    background-color: transparent;
+    color: #0067d4;
     transition:  0.3s;
 }
 
@@ -140,8 +141,21 @@ input[type="checkbox"] {
     margin-top: 20px;
 }
 
+/* paggination */
+.paggination_container{
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* responsiveness design*/
 @media (max-width: 768px) {
+    .landing_nav{
+        width: 100%;
+    }
     .card {
         width: 100%;
     }

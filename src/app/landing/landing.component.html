@@ -74,6 +74,27 @@
     </div>
   </div>
 
+
+  <!-- Pagination Controls -->
+  <div class="paggination_container" *ngIf="!loading && repositories.length > 0">
+    <button 
+      (click)="previousPage()" 
+      [disabled]="currentPage === 1"
+      [ngStyle]="{ 'cursor': currentPage === 1 ? 'not-allowed' : 'pointer' }"
+    >
+      Previous
+    </button>
+    <span>Page {{ currentPage }}</span>
+    <button 
+      (click)="nextPage()" 
+      [disabled]="currentPage * perPage >= totalResults"
+      [ngStyle]="{ 'cursor': currentPage * perPage >= totalResults ? 'not-allowed' : 'pointer' }"
+    >
+      Next
+    </button>
+  </div>
+
+<!------------------       messages           --------------->
   <!--no data found message-->
   <h1 class="message" *ngIf="dataNotFound && !loading">Data not found!</h1>
 

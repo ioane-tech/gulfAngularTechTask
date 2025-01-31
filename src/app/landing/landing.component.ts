@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms'
   styleUrls: ['./landing.component.css'],
 })
 export class LandingComponent {
-  searchQuery = '';
   repositories: any[] = [];
   isTableView = true;
   isDebouncing = false;
@@ -20,6 +19,12 @@ export class LandingComponent {
 
   loading:boolean = false
   errorMessage:string = ''
+
+  //github api variables
+  searchQuery = '';
+  totalResults = 0;
+  currentPage = 1;
+  perPage = 30;
 
   private searchSubject = new Subject<string>();
 
@@ -38,15 +43,20 @@ export class LandingComponent {
   
     //debouncing for the search input
     this.searchSubject.pipe(debounceTime(500)).subscribe((query) =>{
-      this.githubService.searchRepositories(query).subscribe({
-        next: (data) =>this.handleSearchResponse(data),
-        error: (err) =>this.handleErrorResponse(err),
-      });
+      this.searchRepositories(query);
     });
 
   }
 
-  //search data
+  //search function
+  searchRepositories(query: string) {
+    this.githubService.searchRepositories(query, this.perPage, this.currentPage).subscribe({
+      next: (data) => this.handleSearchResponse(data),
+      error: (err) => this.handleErrorResponse(err),
+    });
+  }
+
+  //search response handling
   handleSearchResponse(data: any) {
     if (data.items.length === 0) {
       this.dataNotFound = true;
@@ -54,6 +64,7 @@ export class LandingComponent {
       this.dataNotFound = false;
     }
     this.repositories = data.items;
+    this.totalResults = data.total_count;
     this.isDebouncing = false;
     this.loading = false;
   }
@@ -65,6 +76,7 @@ export class LandingComponent {
     console.error('Error fetching repositories:', err);
     this.repositories = [];
     this.isDebouncing = false;
+    this.totalResults = 0
     this.dataNotFound = false;
     this.loading = false;
   }
@@ -81,14 +93,30 @@ export class LandingComponent {
   search() {
     this.loading = true
     this.errorMessage = '';
-    this.githubService.searchRepositories(this.searchQuery).subscribe({
-      next: (data) =>this.handleSearchResponse(data),
-      error: (err) =>this.handleErrorResponse(err),
+    this.githubService.searchRepositories(this.searchQuery, this.perPage, this.currentPage).subscribe({
+      next: (data) => this.handleSearchResponse(data),
+      error: (err) => this.handleErrorResponse(err),
     });
   }
 
   //detail navigation
   goToDetail(repo: any) {
     this.router.navigate(['/detail', repo.full_name]);
+  }
+
+  //next page
+  nextPage() {
+    if ((this.currentPage * this.perPage) < this.totalResults) {
+      this.currentPage++;
+      this.searchRepositories(this.searchQuery);
+    }
+  }
+
+  // previous page
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.searchRepositories(this.searchQuery);
+    }
   }
 }

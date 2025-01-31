@@ -11,8 +11,8 @@ export class GithubService {
 
   constructor(private http: HttpClient) {}
 
-  searchRepositories(query: string): Observable<any> {
-    return this.http.get<any>(`${this.api}?q=${query}`);
+  searchRepositories(query: string, perPage: number = 30, page: number = 1): Observable<any> {
+    return this.http.get<any>(`${this.api}?q=${query}&per_page=${perPage}&page=${page}`);
   }
 
   getRepositoryDetails(repoName: string): Observable<any> {
