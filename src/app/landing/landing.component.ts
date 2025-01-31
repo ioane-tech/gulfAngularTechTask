@@ -5,7 +5,6 @@ import { debounceTime, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms'
 
-
 @Component({
   selector: 'app-landing',
   imports: [FormsModule, CommonModule],
@@ -19,12 +18,15 @@ export class LandingComponent {
   isDebouncing = false;
   dataNotFound = false;
 
+  loading:boolean = false
+  errorMessage:string = ''
+
   private searchSubject = new Subject<string>();
 
   constructor(
     private githubService: GithubService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     // query parameters for search
     this.route.queryParams.subscribe((params) => {
@@ -35,43 +37,57 @@ export class LandingComponent {
     });
   
     //debouncing for the search input
-    try{
-      this.searchSubject.pipe(debounceTime(500)).subscribe((query) => {
-        //check if query is empy
-        if (!query || query.trim() == '') {
-          this.repositories = [];
-          this.isDebouncing = false;
-          return;
-        }
-        
-        this.githubService.searchRepositories(query).subscribe((data) => {
-          if(data.items.length == 0 ){
-            this.dataNotFound = true
-          }else{
-            this.dataNotFound = false
-          }
-          this.repositories = data.items
-          this.isDebouncing = false;
-        });
+    this.searchSubject.pipe(debounceTime(500)).subscribe((query) =>{
+      this.githubService.searchRepositories(query).subscribe({
+        next: (data) =>this.handleSearchResponse(data),
+        error: (err) =>this.handleErrorResponse(err),
       });
-    }catch(err){
-      console.log(err)
-      this.repositories = []
-    }
+    });
 
   }
 
+  //search data
+  handleSearchResponse(data: any) {
+    if (data.items.length === 0) {
+      this.dataNotFound = true;
+    } else {
+      this.dataNotFound = false;
+    }
+    this.repositories = data.items;
+    this.isDebouncing = false;
+    this.loading = false;
+  }
+  //search error handling
+  handleErrorResponse(err: any) {
+    if(this.searchQuery.length > 0){
+      this.errorMessage = err.error.message
+    }
+    console.error('Error fetching repositories:', err);
+    this.repositories = [];
+    this.isDebouncing = false;
+    this.dataNotFound = false;
+    this.loading = false;
+  }
+
+  //search change
   onSearchChange() {
+    this.loading = true
+    this.errorMessage = '';
     this.isDebouncing = true;
     this.searchSubject.next(this.searchQuery);
   }
 
+  //search functionality
   search() {
-    this.githubService.searchRepositories(this.searchQuery).subscribe((data) => {
-      this.repositories = data.items;
+    this.loading = true
+    this.errorMessage = '';
+    this.githubService.searchRepositories(this.searchQuery).subscribe({
+      next: (data) =>this.handleSearchResponse(data),
+      error: (err) =>this.handleErrorResponse(err),
     });
   }
 
+  //detail navigation
   goToDetail(repo: any) {
     this.router.navigate(['/detail', repo.full_name]);
   }

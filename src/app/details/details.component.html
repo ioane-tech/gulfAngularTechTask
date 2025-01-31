@@ -1,8 +1,30 @@
 <div class="container">
-    <h1>{{ repository?.name }}</h1>
-    <p><strong>Description:</strong> {{ repository?.description }}</p>
-    <p><strong>Stars:</strong> {{ repository?.stargazers_count }}</p>
-    <p><strong>Forks:</strong> {{ repository?.forks_count }}</p>
-    <a [href]="repository?.html_url" target="_blank">View on GitHub</a>
+    <!--loading element-->
+    <div *ngIf="loading" class="loading">
+        <h1>Loading...</h1>
+    </div>
+
+    <!-- repo details -->
+    <div *ngIf="!loading && !repoNotFound">
+        <h1>
+            {{ repository?.name }} 
+            <img width="30px" src="/assets/images/repoName.png" alt="star image"/>
+        </h1>
+        <p><strong>Description:</strong> {{ repository?.description }}</p>
+        <p>
+            <strong>Stars:</strong> {{ repository?.stargazers_count }}
+            <img width="20px" src="/assets/images/star.png" alt="star image"/>
+        </p>
+        <p>
+            <strong>Forks:</strong> {{ repository?.forks_count }}
+            <img width="25px" src="/assets/images/forks.png" alt="star image"/>
+        </p>
+        <a [href]="repository?.html_url" target="_blank">View on GitHub</a>
+    </div>
+
+    <!-- repo details not found  -->
+    <h1 *ngIf="repoNotFound" class="data_not_found" #repoNotFoundTemplate>
+        {{errorMessage}}
+    </h1>
 </div>
   

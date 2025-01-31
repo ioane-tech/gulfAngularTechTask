@@ -1,4 +1,5 @@
 <div class="container">
+  <!-- search -->
   <div class="landing_nav">
     <h1>GitHub Repository Search</h1>
     <div>
@@ -16,37 +17,71 @@
     </div>
   </div>
     
-  
-    <div *ngIf="isTableView; else cardView">
-      <!--table view-->
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Stars</th>
-            <th>Forks</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let repo of repositories" (click)="goToDetail(repo)">
-            <td>{{ repo.name }}</td>
-            <td>{{ repo.stargazers_count }}</td>
-            <td>{{ repo.forks_count }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <!--card view-->
-    <ng-template #cardView>
-      <div class="card" *ngFor="let repo of repositories" (click)="goToDetail(repo)">
-        <h3>{{ repo.name }}</h3>
-        <p>Stars: {{ repo.stargazers_count }}</p>
-        <p>Forks: {{ repo.forks_count }}</p>
-      </div>
-    </ng-template>
+  <!-- table view -->
+  <div *ngIf="isTableView && !loading">
+    <!--table view-->
+    <table>
+      <thead>
+        <tr>
+          <th>
+            Name
+            <img width="20px" src="/assets/images/repoName.png" alt="star image"/>
+          </th>
+          <th>
+            Stars 
+            <img width="15px" src="/assets/images/star.png" alt="star image"/>
+          </th>
+          <th>
+            Forks
+            <img width="20px" src="/assets/images/forks.png" alt="star image"/>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let repo of repositories" (click)="goToDetail(repo)">
+          <td>
+            {{ repo.name }}
+            <img width="20px" src="/assets/images/repoName.png" alt="star image"/>
+          </td>
+          <td>
+            {{ repo.stargazers_count }} 
+            <img width="15px" src="/assets/images/star.png" alt="star image"/>
+          </td>
+          <td>
+            {{ repo.forks_count }}
+            <img width="20px" src="/assets/images/forks.png" alt="star image"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <!--no data found message-->
-    <h1 class="data_not_found" *ngIf="dataNotFound">Data not found!</h1>
+  <!--card view-->
+  <div class="card_view_container" *ngIf="!isTableView && !loading">
+    <div class="card" *ngFor="let repo of repositories" (click)="goToDetail(repo)">
+      <h3>
+        {{ repo.name }}
+        <img width="20px" src="/assets/images/repoName.png" alt="star image"/>
+      </h3>
+      <p>
+        Stars: {{ repo.stargazers_count }}
+        <img width="15px" src="/assets/images/star.png" alt="star image"/>
+      </p>
+      <p>
+        Forks: {{ repo.forks_count }}
+        <img width="20px" src="/assets/images/forks.png" alt="star image"/>
+      </p>
+    </div>
+  </div>
+
+  <!--no data found message-->
+  <h1 class="message" *ngIf="dataNotFound && !loading">Data not found!</h1>
+
+  <!-- loading message-->
+  <h1 class="message" *ngIf="loading">Loading...</h1>
+
+  <!-- error message -->
+  <h1 class="message" *ngIf="errorMessage.length > 0">{{errorMessage}}</h1>
+
 </div>
   
